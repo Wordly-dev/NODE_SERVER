@@ -11,7 +11,7 @@ const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../../config/config.json")[env];
 
 const db = {};
-const defOptions = { paranoid: true };
+const defOptions = { paranoid: true, freezeTableName: true };
 
 //capitalizeFirstLetterWithoutIndex
 const CFLWI = (str) => {

@@ -6,7 +6,7 @@ const {
   defAnswer,
 } = require("@utils");
 
-const get = (req, res) => {
+const getWord = (req, res) => {
   const { limit, offset, ...queryParams } = req.query;
 
   const where = Object.keys(queryParams).length
@@ -17,7 +17,7 @@ const get = (req, res) => {
     .defAnswer(res);
 };
 
-const getById = (req, res) => {
+const getWordById = (req, res) => {
   const { id } = req.params;
 
   models.word
@@ -34,7 +34,11 @@ const getById = (req, res) => {
     .defAnswer(res);
 };
 
-module.exports = (router) => {
-  router.get("/", get);
-  router.get("/:id", getById);
+module.exports = {
+  loadController: (router) => {
+    router.get("/", getWord);
+    router.get("/:id", getWordById);
+  },
+  getWord,
+  getWordById,
 };

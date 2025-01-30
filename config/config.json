@@ -2,14 +2,14 @@
   "development": {
     "username": "postgres",
     "password": "postgres",
-    "database": "foreignLanguages",
+    "database": "foreign_languages",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
     "username": "postgres",
     "password": "postgres",
-    "database": "foreignLanguages",
+    "database": "foreign_languages",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },

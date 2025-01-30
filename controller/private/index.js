@@ -38,7 +38,7 @@ findFiles.forEach((item) => {
           .map((item, index) => (index !== 0 ? CFLWI(item) : item))
           .join("");
 
-  const loadController = require(`${item.path}`);
+  const { loadController } = require(`${item.path}`);
 
   if (typeof loadController === "function") {
     const router = express.Router();

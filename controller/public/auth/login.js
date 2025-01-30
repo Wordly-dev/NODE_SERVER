@@ -3,8 +3,8 @@ const { jwtCreate } = require("@utils");
 const { jwtPassword } = require("@config");
 const bcrypt = require("bcrypt");
 
-const get = async (req, res) => {
-  const { login, password } = req.query;
+const post = async (req, res) => {
+  const { login, password } = req.body;
 
   const inputData = { login, password };
   if (
@@ -46,11 +46,16 @@ const get = async (req, res) => {
 
   res.send({
     isAuth: true,
-    accessToken: jwtCreate({ login: findUser.login, password }, jwtPassword),
+    accessToken: `"${jwtCreate(
+      { login: findUser.login, password },
+      jwtPassword
+    )}"`,
     userLogin: findUser.login,
   });
 };
 
-module.exports = (router) => {
-  router.get("/", get);
+module.exports = {
+  loadController: (router) => {
+    router.post("/", post);
+  },
 };

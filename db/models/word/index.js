@@ -11,7 +11,7 @@ module.exports = (db, modelName, options) => {
   );
 
   model.associate = (models) => {
-    model.belongsTo(models.dictionary, {
+    model.belongsTo(models.Dictionary, {
       onDelete: "NO ACTION",
       onUpdate: "NO ACTION",
     });

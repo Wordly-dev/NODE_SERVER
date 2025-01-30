@@ -2,14 +2,14 @@ const models = require("@models");
 const bcrypt = require("bcrypt");
 const { defInclude, checkFields, excludeFields } = require("@utils");
 
-const post = async (req, res) => {
+const postUser = async (req, res) => {
   const data = req.body;
 
   data.password = await bcrypt.hash(data.password, 10);
   models.user.create(data).defAnswer(res);
 };
 
-const put = async (req, res) => {
+const putUser = async (req, res) => {
   const { id } = req.query;
   const { password, ...bodyParams } = req.body;
 
@@ -27,7 +27,7 @@ const put = async (req, res) => {
   }
 };
 
-const del = (req, res) => {
+const deleteUser = (req, res) => {
   const { id } = req.query;
 
   if (id && (req?.userData.isAdmin || req?.userData.isSuperAdmin))
@@ -37,16 +37,20 @@ const del = (req, res) => {
   }
 };
 
-module.exports = (router) => {
-  router.put("/", put);
-  router.post(
-    "/",
-    checkFields(
-      excludeFields(defInclude(["login", "password"]), ["id"]),
-      "body"
-    ),
-    post
-  );
-
-  router.delete("/", del);
+module.exports = {
+  loadController: (router) => {
+    router.post(
+      "/",
+      checkFields(
+        excludeFields(defInclude(["login", "password"]), ["id"]),
+        "body"
+      ),
+      postUser
+    );
+    router.put("/", putUser);
+    router.delete("/", deleteUser);
+  },
+  postUser,
+  putUser,
+  deleteUser,
 };

@@ -1,7 +1,7 @@
 const models = require("@models");
 const { defInclude, excludeFields, getLikeTemplate } = require("@utils");
 
-const get = (req, res) => {
+const getDictionary = (req, res) => {
   const { offset, limit, ...queryParams } = req.query;
 
   const where = getLikeTemplate(
@@ -9,7 +9,9 @@ const get = (req, res) => {
     excludeFields(defInclude(), ["id"])
   );
 
-  models.dictionary
+  models.Dictionary.findAll().defAnswer(res);
+
+  /*models.dictionary
     .findAndCountAll({
       where,
       limit,
@@ -17,16 +19,19 @@ const get = (req, res) => {
       attributes: defInclude(),
       include: [
         {
-          model: models.media,
+          model: models.dictionarySettings,
+        },
+        {
+          model: models.file,
           attributes: defInclude(["path"]),
         },
-        { model: models.word, as: "words" },
       ],
     })
     .defAnswer(res);
+    */
 };
 
-const getById = async (req, res) => {
+const getDictionaryById = async (req, res) => {
   const { id } = req.params;
 
   models.dictionary
@@ -38,13 +43,22 @@ const getById = async (req, res) => {
           model: models.media,
           attributes: defInclude(["path"]),
         },
-        models.word,
+        {
+          model: models.word,
+        },
+        {
+          model: models.dictionarySettings,
+        },
       ],
     })
     .defAnswer(res);
 };
 
-module.exports = (router) => {
-  router.get("/", get);
-  router.get("/:id", getById);
+module.exports = {
+  loadController: (router) => {
+    router.get("/", getDictionary);
+    router.get("/:id", getDictionaryById);
+  },
+  getDictionary,
+  getDictionaryById,
 };

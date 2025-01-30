@@ -6,8 +6,11 @@ const {
   getLikeTemplate,
   createFile,
 } = require("@utils");
+const {
+  postDictionarySettings,
+} = require("@controller/public/dictionarySettings");
 
-const get = (req, res) => {
+const getDictionary = (req, res) => {
   const { offset, limit, ...queryParams } = req.query;
 
   const where = getLikeTemplate(queryParams, defInclude());
@@ -30,7 +33,7 @@ const get = (req, res) => {
     .defAnswer(res);
 };
 
-const getById = (req, res) => {
+const getDictionaryById = (req, res) => {
   const { id } = req.params;
 
   models.dictionary
@@ -42,12 +45,15 @@ const getById = (req, res) => {
           model: models.media,
           attributes: defInclude(["path"]),
         },
+        {
+          model: models.dictionarySettings,
+        },
       ],
     })
     .defAnswer(res);
 };
 
-const post = async (req, res) => {
+const postDictionary = async (req, res) => {
   const data = req.body;
   data.userId = req.userData.id;
 
@@ -57,16 +63,24 @@ const post = async (req, res) => {
     ).id;
   }
 
-  models.dictionary.create(data).defAnswer(res);
+  models.dictionary
+    .create(data)
+    .then(async (dictionary) => {
+      req.body.dictionaryId = dictionary.id;
+      await postDictionarySettings(req, res);
+
+      return dictionary;
+    })
+    .defAnswer(res);
 };
 
-const put = (req, res) => {
+const putDictionary = (req, res) => {
   const { id } = req.query;
 
   models.dictionary.update(req.body, { where: { id } }).defAnswer(res);
 };
 
-const del = (req, res) => {
+const deleteDictionary = (req, res) => {
   const { id } = req.query;
 
   if (id && (req?.userData.isAdmin || req?.userData.isSuperAdmin))
@@ -78,19 +92,25 @@ const del = (req, res) => {
   }
 };
 
-module.exports = (router) => {
-  router.get("/", get);
-  router.get("/:id", getById);
-  router.put(
-    "/",
-    checkFields(excludeFields(defInclude(), ["id"]), "body"),
-    put
-  );
-  router.post(
-    "/",
-    checkFields(excludeFields(defInclude(), ["id"]), "body"),
-    createFile,
-    post
-  );
-  router.delete("/", del);
+module.exports = {
+  loadController: (router) => {
+    router.get("/", getDictionary);
+    router.get("/:id", getDictionaryById);
+    router.post(
+      "/",
+      checkFields(excludeFields(defInclude(), ["id"]), "body"),
+      createFile,
+      postDictionary
+    );
+    router.put(
+      "/",
+      checkFields(excludeFields(defInclude(), ["id"]), "body"),
+      putDictionary
+    );
+    router.delete("/", deleteDictionary);
+  },
+  getDictionary,
+  getDictionaryById,
+  postDictionary,
+  deleteDictionary,
 };

@@ -1,19 +1,19 @@
 const models = require("@models");
 const { checkFields, excludeFields, defInclude } = require("@utils");
 
-const post = (req, res) => {
+const postWord = (req, res) => {
   const data = req.body;
   models.word.create(data).defAnswer(res);
 };
 
-const put = (req, res) => {
+const putWord = (req, res) => {
   const { id } = req.query;
   const data = req.body;
 
   models.word.update(data, { where: { id } }).then((data) => res.send(data));
 };
 
-const del = (req, res) => {
+const deleteWord = (req, res) => {
   const { id } = req.query;
 
   if (id && (req?.userData.isAdmin || req?.userData.isSuperAdmin))
@@ -23,16 +23,35 @@ const del = (req, res) => {
   }
 };
 
-module.exports = (router) => {
-  router.post(
-    "/",
-    checkFields(excludeFields(defInclude(), ["id"]), "body"),
-    post
-  );
-  router.put(
-    "/",
-    checkFields(excludeFields(defInclude(), ["id"]), "body"),
-    put
-  );
-  router.delete("/", checkFields(["id"]), del);
+const importWord = (req, res) => {
+  const { id, dictionaryId } = req.body;
+
+  models.word
+    .findOne({ where: { id } })
+    .then((word) => {
+      const { id, ...other } = word.toJSON();
+      return models.word.create({ ...other, dictionaryId });
+    })
+    .defAnswer(res);
+};
+
+module.exports = {
+  loadController: (router) => {
+    router.post(
+      "/",
+      checkFields(excludeFields(defInclude(), ["id"]), "body"),
+      postWord
+    );
+    router.post("/import", checkFields(["id"], "body"), importWord),
+      router.put(
+        "/",
+        checkFields(excludeFields(defInclude(), ["id"]), "body"),
+        putWord
+      );
+    router.delete("/", checkFields(["id"]), deleteWord);
+  },
+  postWord,
+  putWord,
+  deleteWord,
+  importWord,
 };

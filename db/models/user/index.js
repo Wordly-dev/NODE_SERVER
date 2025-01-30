@@ -21,7 +21,7 @@ module.exports = (db, modelName, options) => {
   );
 
   model.associate = (models) => {
-    model.hasMany(models.dictionary, {
+    model.hasMany(models.Dictionary, {
       onDelete: "NO ACTION",
       onUpdate: "NO ACTION",
     });

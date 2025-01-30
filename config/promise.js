@@ -7,5 +7,8 @@ Promise.prototype.defAnswer = function (res, errorStatus = 404) {
         )
       );
     } else res.send(data);
-  }).catch((err) => res.status(errorStatus).send("Something went wrong"));
+  }).catch((err) => {
+    console.log(err);
+    res.status(errorStatus).send("Something went wrong");
+  });
 };

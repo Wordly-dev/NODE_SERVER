@@ -11,13 +11,16 @@ module.exports = (db, modelName, options) => {
   );
 
   model.associate = (models) => {
-    model.hasMany(models.word, {
+    model.hasMany(models.Word, {
       as: "posts",
       onDelete: "CASCADE",
       onUpdate: "NO ACTION",
     });
-    model.belongsTo(models.media, {
-      foreignKey: "mediaId",
+    model.hasOne(models.DictionarySettings, {
+      onDelete: "NO ACTION",
+      onUpdate: "NO ACTION",
+    });
+    model.belongsTo(models.File, {
       onDelete: "NO ACTION",
       onUpdate: "NO ACTION",
     });

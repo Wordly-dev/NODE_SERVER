@@ -3,7 +3,7 @@ const fs = require("fs");
 const zlib = require("zlib");
 const { createPath } = require("@utils");
 
-const get = (req, res) => {
+const getMedia = (req, res) => {
   const { id } = req.query;
 
   if (!id) {
@@ -41,6 +41,9 @@ const get = (req, res) => {
     });
 };
 
-module.exports = (router) => {
-  router.get("/", get);
+module.exports = {
+  loadController: (router) => {
+    router.get("/", getMedia);
+  },
+  getMedia,
 };

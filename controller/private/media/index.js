@@ -1,12 +1,12 @@
 const models = require("@models");
 const { checkFields, createPath, createFile } = require("@utils");
 
-const post = (req, res) => {
+const postMedia = (req, res) => {
   const { id } = req.body;
   models.media.findOne({ where: { id: req.mediaId ?? id } }).defAnswer(res);
 };
 
-const del = (req, res) => {
+const deleteMedia = (req, res) => {
   const { id } = req.query;
 
   if (req?.userData.isAdmin || req?.userData.isSuperAdmin)
@@ -16,7 +16,11 @@ const del = (req, res) => {
   }
 };
 
-module.exports = (router) => {
-  router.post("/", createFile, post);
-  router.delete("/", checkFields(["id"]), del);
+module.exports = {
+  loadController: (router) => {
+    router.post("/", createFile, postMedia);
+    router.delete("/", checkFields(["id"]), deleteMedia);
+  },
+  postMedia,
+  deleteMedia,
 };

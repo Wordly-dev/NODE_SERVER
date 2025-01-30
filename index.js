@@ -4,7 +4,6 @@ const fileUpload = require("express-fileupload");
 const express = require("express");
 const { bindControllers } = require("@controller");
 const cors = require("cors");
-const path = require("path");
 
 const app = express();
 
